@@ -40,21 +40,24 @@ class Game extends React.Component {
             if (sumSelected > this.target) {
                 return 'LOST';
             }
-            }
-        }
-    render() {
+        };
+
+ render() {
         const gameStatus =  this.gameStatus();
         return (
             <View style={styles.container}>
-                <Text style={styles.target}>{this.target}</Text>
+                <Text style={[styles.target, styles[`STATUS_${gameStatus}`]]}>
+                    {this.target}
+                    </Text>
                 <View style={styles.randomContainer}>
                     {this.randomNumbers.map((randomNumber, index) => (
                         <RandomNumber 
                         key={index} 
                         id={index} 
                         number={randomNumber} 
-                        isDisabled ={this.isNumberselected(index)} 
-                        onPress={this.selectNumber}/>
+                        isDisabled ={this.isNumberselected(index) || gameStatus !== 'PLAYING'} 
+                        onPress={this.selectNumber}
+                        />
                     ))}
                 </View>
                 <Text>{gameStatus}</Text>
