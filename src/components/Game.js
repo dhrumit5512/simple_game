@@ -60,16 +60,16 @@ class Game extends React.Component {
 
     componentWillUpdate(nextProps, nextState) {
         if (
-          nextState.selectedIds !== this.state.selectedIds ||
-          nextState.remainingSeconds === 0
+            nextState.selectedIds !== this.state.selectedIds ||
+            nextState.remainingSeconds === 0
         ) {
-          this.gameStatus = this.calcGameStatus(nextState);
-          if (this.gameStatus !== 'PLAYING') {
-            clearInterval(this.intervalId);
-          }
+            this.gameStatus = this.calcGameStatus(nextState);
+            if (this.gameStatus !== 'PLAYING') {
+                clearInterval(this.intervalId);
+            }
         }
-      }
-    
+    }
+
 
     calcGameStatus = nextState => {
         const sumSelected = this.state.selectedIds.reduce((acc, curr) => {
@@ -98,15 +98,15 @@ class Game extends React.Component {
                 </Text>
                 <View style={styles.randomContainer}>
                     {this.shuffledRandomNumbers.map((randomNumber, index) => (
-            <RandomNumber
-            key={index}
-            id={index}
-            number={randomNumber}
-            isDisabled={
-              this.isNumberSelected(index) || gameStatus !== 'PLAYING'
-            }
-            onPress={this.selectNumber}
-          />
+                        <RandomNumber
+                            key={index}
+                            id={index}
+                            number={randomNumber}
+                            isDisabled={
+                                this.isNumberSelected(index) || gameStatus !== 'PLAYING'
+                            }
+                            onPress={this.selectNumber}
+                        />
                     ))}
                 </View>
                 {this.gameStatus !== 'PLAYING' && (
