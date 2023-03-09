@@ -11,12 +11,22 @@ class Game extends React.Component {
     };
     state ={
         selectedNumber: [],
+        remainingSeconds: this.props.initialSecond,
     };
-    randomNumbers = Array.from({ length: this.props.randomNumberCount }).map(() => 1 + Math.floor(10 * Math.random()),
+    randomNumbers = Array.from({ length: this.props.randomNumberCount }).map(
+        () => 1 + Math.floor(10 * Math.random()),
     );
     target = this.randomNumbers
         .slice(0, this.props.randomNumberCount - 2)
         .reduce((acc, curr) => acc + curr, 0);
+
+        componentDidmount() {
+            setInterval(() => {
+                this.setState((prevState) => {
+                    return { remainingSeconds: prevState.remainingSeconds - 1 };
+                });
+            }, 1000);
+        }
 
         isNumberselected = (numberIndex) => {
             return this.state.selectedNumbers.indexOF(numberIndex) >= 0;
@@ -60,7 +70,7 @@ class Game extends React.Component {
                         />
                     ))}
                 </View>
-                <Text>{gameStatus}</Text>
+                <Text>{this.state.remainingSeconds}</Text>
             </View>
         );
     }
