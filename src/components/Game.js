@@ -1,5 +1,4 @@
 import React from 'react';
-
 import PropTypes from 'prop-types';
 
 import { View, Text, StyleSheet } from "react-native";
@@ -10,21 +9,55 @@ class Game extends React.Component {
     static propTypes = {
         randomNumberCount: PropTypes.number.isRequired,
     };
-    randomNumbers = Array
-        .from({ length: this.props.randomNumberCount })
-        .map(() => 1 + Math.floor(10 * Math.random()));
+    state ={
+        selectedNumber: [],
+    };
+    randomNumbers = Array.from({ length: this.props.randomNumberCount }).map(() => 1 + Math.floor(10 * Math.random()),
+    );
     target = this.randomNumbers
         .slice(0, this.props.randomNumberCount - 2)
         .reduce((acc, curr) => acc + curr, 0);
+
+        isNumberselected = (numberIndex) => {
+            return this.state.selectedNumbers.indexOF(numberIndex) >= 0;
+        };
+        selectNumber = (numberIndex) => {
+            this.setState((prevState) => ({
+                selectedNumbers: [...prevState.selectedNumbers, numberIndex],
+            }));
+        };
+
+        gameStatus = () => {
+            const sumSelected = this.state.selectedIDs.reduce((acc, curr) => {
+                return acc +nthis.randomNumbers[cirr];
+            },0);
+            if (sumSelected < this.target) {
+                return 'PLAYING';
+            }
+            if (sumSelected === this.target) {
+                return 'WON';
+            }
+            if (sumSelected > this.target) {
+                return 'LOST';
+            }
+            }
+        }
     render() {
+        const gameStatus =  this.gameStatus();
         return (
             <View style={styles.container}>
                 <Text style={styles.target}>{this.target}</Text>
                 <View style={styles.randomContainer}>
-                    {this.randomNumbers.map((randomNumber, index) =>
-                        <RandomNumber key={index} number={randomNumber} />
-                    )}
+                    {this.randomNumbers.map((randomNumber, index) => (
+                        <RandomNumber 
+                        key={index} 
+                        id={index} 
+                        number={randomNumber} 
+                        isDisabled ={this.isNumberselected(index)} 
+                        onPress={this.selectNumber}/>
+                    ))}
                 </View>
+                <Text>{gameStatus}</Text>
             </View>
         );
     }
