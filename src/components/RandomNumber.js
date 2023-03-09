@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Text, StyleSheet } from "react-native";
+import { Text,TouchableOpacity, StyleSheet } from "react-native";
 
 import React from "react";
 
@@ -10,7 +10,7 @@ class RandomNumber extends React.Component {
         number: PropTypes.number.isRequired,
     };
     handlePress = () => {
-        console.log(this.props.number);
+        //console.log(this.props.number);
     }
     render() {
         return (
