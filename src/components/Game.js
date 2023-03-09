@@ -10,7 +10,7 @@ import shuffle from 'lodash.shuffle';
 class Game extends React.Component {
     static propTypes = {
         randomNumberCount: PropTypes.number.isRequired,
-        initialSecond: PropTypes.number,isRequired,
+        initialSecond: PropTypes.number, isRequired,
         onPlayAgain: PropTypes.func.isRequired,
     };
     state = {
@@ -27,19 +27,19 @@ class Game extends React.Component {
         .slice(0, this.props.randomNumberCount - 2)
         .reduce((acc, curr) => acc + curr, 0);
 
-        shuffledRandomNumbers = shuffle(this.randomNumbers);
+    shuffledRandomNumbers = shuffle(this.randomNumbers);
 
     componentDidmount() {
         this.intervalID = setInterval(() => {
             this.setState(
                 prevState => {
-                return { remainingSeconds: prevState.remainingSeconds - 1 };
-            }, 
-            () => {
-                if (this.state.remainingSeconds === 0) {
-                    clearInterval(this.intervalID);
-                }
-            },
+                    return { remainingSeconds: prevState.remainingSeconds - 1 };
+                },
+                () => {
+                    if (this.state.remainingSeconds === 0) {
+                        clearInterval(this.intervalID);
+                    }
+                },
             );
         }, 1000);
     }
@@ -58,13 +58,13 @@ class Game extends React.Component {
     };
     componentWillUpdate(nextProps, nextState) {
         if (
-            nextState.selectedIds !== this.state.selectedIds || 
+            nextState.selectedIds !== this.state.selectedIds ||
             nextState.remainingSeconds === 0
-            ) {
-             this.gameStatus = this.calcGameStatus(nextstate);
-             if(this.gameStatus !== 'PLAYING') {
+        ) {
+            this.gameStatus = this.calcGameStatus(nextstate);
+            if (this.gameStatus !== 'PLAYING') {
                 clearInterval(this.intervalId);
-         }
+            }
         }
     }
 
@@ -88,7 +88,7 @@ class Game extends React.Component {
     };
 
     render() {
-        const gameStatus = this.gameStatus();
+        const gameStatus = this.gameStatus;
         return (
             <View style={styles.container}>
                 <Text style={[styles.target, styles[`STATUS_${gameStatus}`]]}>
@@ -105,6 +105,9 @@ class Game extends React.Component {
                         />
                     ))}
                 </View>
+                {this.gameStatus !== 'PLAYING' && (
+          <Button title="Play Again" onPress={this.props.onPlayAgain} />
+        )}
                 <Text>{this.state.remainingSeconds}</Text>
             </View>
         );
@@ -141,13 +144,13 @@ const styles = StyleSheet.create({
     },
     STATUS_PLAYING: {
         backgroundColor: '#bbb',
-      },
-      STATUS_WON: {
+    },
+    STATUS_WON: {
         backgroundColor: 'green',
-      },
-      STATUS_LOST: {
+    },
+    STATUS_LOST: {
         backgroundColor: 'red',
-      },
+    },
 });
 
 export default Game;
