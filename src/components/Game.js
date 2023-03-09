@@ -10,7 +10,7 @@ import shuffle from 'lodash.shuffle';
 class Game extends React.Component {
     static propTypes = {
         randomNumberCount: PropTypes.number.isRequired,
-        initialSecond: PropTypes.number, isRequired,
+        initialSeconds: PropTypes.number.isRequired,
         onPlayAgain: PropTypes.func.isRequired,
     };
     state = {
@@ -29,15 +29,15 @@ class Game extends React.Component {
 
     shuffledRandomNumbers = shuffle(this.randomNumbers);
 
-    componentDidmount() {
-        this.intervalID = setInterval(() => {
+    componentDidMount() {
+        this.intervalId = setInterval(() => {
             this.setState(
                 prevState => {
                     return { remainingSeconds: prevState.remainingSeconds - 1 };
                 },
                 () => {
                     if (this.state.remainingSeconds === 0) {
-                        clearInterval(this.intervalID);
+                        clearInterval(this.intervalId);
                     }
                 },
             );
@@ -51,11 +51,13 @@ class Game extends React.Component {
     isNumberSelected = (numberIndex) => {
         return this.state.selectedIds.indexOf(numberIndex) >= 0;
     };
+
     selectNumber = (numberIndex) => {
         this.setState((prevState) => ({
             selectedIds: [...prevState.selectedIds, numberIndex],
         }));
     };
+
     componentWillUpdate(nextProps, nextState) {
         if (
             nextState.selectedIds !== this.state.selectedIds ||
@@ -68,11 +70,10 @@ class Game extends React.Component {
         }
     }
 
-    calcGameStatus = (nextState) => {
-        const sumSelected = this.state.selectedIDs.reduce((acc, curr) => {
-            return acc + this.randomNumbers[curr];
+    calcGameStatus = nextState => {
+        const sumSelected = this.state.selectedIds.reduce((acc, curr) => {
+            return acc + this.shuffledRandomNumbers[curr];
         }, 0);
-
         if (nextState.remainingSeconds === 0) {
             return 'LOST';
         }
@@ -101,13 +102,12 @@ class Game extends React.Component {
                             id={index}
                             number={randomNumber}
                             isDisabled={this.isNumberselected(index) || gameStatus !== 'PLAYING'}
-                            onPress={this.selectNumber}
-                        />
+                            onPress={this.selectNumber} />
                     ))}
                 </View>
                 {this.gameStatus !== 'PLAYING' && (
-          <Button title="Play Again" onPress={this.props.onPlayAgain} />
-        )}
+                    <Button title="Play Again" onPress={this.props.onPlayAgain} />
+                )}
                 <Text>{this.state.remainingSeconds}</Text>
             </View>
         );
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
 
     target: {
         fontSize: 50,
-        backgroundColour: '#aaa',
+        backgroundColour: '#bbb',
         margin: 50,
         textAlign: 'center',
     },
