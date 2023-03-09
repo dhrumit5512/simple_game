@@ -9,13 +9,17 @@ class RandomNumber extends React.Component {
     static PropTypes = {
         number: PropTypes.number.isRequired,
     };
+    handlePress = () => {
+        console.log(this.props.number);
+    }
     render() {
         return (
+            <TouchableOpacity onPress={this.handlePress}>
             <Text style={styles.random}>{this.props.number}</Text>
+            </TouchableOpacity>
         );
     }
 }
-
 const styles = StyleSheet.create({
 
     random: {
