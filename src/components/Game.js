@@ -1,18 +1,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, Button, StyleSheet } from "react-native";
 
 import RandomNumber from './RandomNumber';
+import shuffle from 'lodash.shuffle';
+
 
 class Game extends React.Component {
     static propTypes = {
         randomNumberCount: PropTypes.number.isRequired,
+        initialSecond: PropTypes.number,isRequired,
+        onPlayAgain: PropTypes.func.isRequired,
     };
-    state ={
-        selectedNumber: [],
+    state = {
+        selectedIds: [],
         remainingSeconds: this.props.initialSecond,
     };
+
+    gameStatus = 'PLAYING';
+
     randomNumbers = Array.from({ length: this.props.randomNumberCount }).map(
         () => 1 + Math.floor(10 * Math.random()),
     );
@@ -20,64 +27,81 @@ class Game extends React.Component {
         .slice(0, this.props.randomNumberCount - 2)
         .reduce((acc, curr) => acc + curr, 0);
 
-        componentDidmount() {
-            this.intervalID = setInterval(() => {
-                this.setState((prevState) => {
-                    return { remainingSeconds: prevState.remainingSeconds - 1 };
-                 }, () => {
-                    if (this.state.remainingSeconds === 0) {
-                        clearInterval(this.intervalID);
-                    }
-                 });
-            }, 1000);
+        shuffledRandomNumbers = shuffle(this.randomNumbers);
+
+    componentDidmount() {
+        this.intervalID = setInterval(() => {
+            this.setState(
+                prevState => {
+                return { remainingSeconds: prevState.remainingSeconds - 1 };
+            }, 
+            () => {
+                if (this.state.remainingSeconds === 0) {
+                    clearInterval(this.intervalID);
+                }
+            },
+            );
+        }, 1000);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.intervalId);
+    }
+
+    isNumberSelected = (numberIndex) => {
+        return this.state.selectedIds.indexOf(numberIndex) >= 0;
+    };
+    selectNumber = (numberIndex) => {
+        this.setState((prevState) => ({
+            selectedIds: [...prevState.selectedIds, numberIndex],
+        }));
+    };
+    componentWillUpdate(nextProps, nextState) {
+        if (
+            nextState.selectedIds !== this.state.selectedIds || 
+            nextState.remainingSeconds === 0
+            ) {
+             this.gameStatus = this.calcGameStatus(nextstate);
+             if(this.gameStatus !== 'PLAYING') {
+                clearInterval(this.intervalId);
+         }
         }
+    }
 
-        componentwillUnmount() {
-            clearInterval(this.intervalID);
+    calcGameStatus = (nextState) => {
+        const sumSelected = this.state.selectedIDs.reduce((acc, curr) => {
+            return acc + this.randomNumbers[curr];
+        }, 0);
+
+        if (nextState.remainingSeconds === 0) {
+            return 'LOST';
         }
+        if (sumSelected < this.target) {
+            return 'PLAYING';
+        }
+        if (sumSelected === this.target) {
+            return 'WON';
+        }
+        if (sumSelected > this.target) {
+            return 'LOST';
+        }
+    };
 
-        isNumberSelected = (numberIndex) => {
-            return this.state.selectedIds.indexOf(numberIndex) >= 0;
-        };
-        selectNumber = (numberIndex) => {
-            this.setState((prevState) => ({
-                selectedIds: [...prevState.selectedIds, numberIndex],
-            }));
-        };
-
-        gameStatus = () => {
-            const sumSelected = this.state.selectedIDs.reduce((acc, curr) => {
-                return acc + this.randomNumbers[curr];
-            },0);
-            if (this.state.remainingSeconds === 0) {
-                return 'LOST';
-            }
-            if (sumSelected < this.target) {
-                return 'PLAYING';
-            }
-            if (sumSelected === this.target) {
-                return 'WON';
-            }
-            if (sumSelected > this.target) {
-                return 'LOST';
-            }
-        };
-
- render() {
-        const gameStatus =  this.gameStatus();
+    render() {
+        const gameStatus = this.gameStatus();
         return (
             <View style={styles.container}>
                 <Text style={[styles.target, styles[`STATUS_${gameStatus}`]]}>
                     {this.target}
-                    </Text>
+                </Text>
                 <View style={styles.randomContainer}>
-                    {this.randomNumbers.map((randomNumber, index) => (
-                        <RandomNumber 
-                        key={index} 
-                        id={index} 
-                        number={randomNumber} 
-                        isDisabled ={this.isNumberselected(index) || gameStatus !== 'PLAYING'} 
-                        onPress={this.selectNumber}
+                    {this.shuffledRandomNumbers.map((randomNumber, index) => (
+                        <RandomNumber
+                            key={index}
+                            id={index}
+                            number={randomNumber}
+                            isDisabled={this.isNumberselected(index) || gameStatus !== 'PLAYING'}
+                            onPress={this.selectNumber}
                         />
                     ))}
                 </View>
@@ -115,6 +139,15 @@ const styles = StyleSheet.create({
         fontSize: 35,
         textAlign: 'center',
     },
+    STATUS_PLAYING: {
+        backgroundColor: '#bbb',
+      },
+      STATUS_WON: {
+        backgroundColor: 'green',
+      },
+      STATUS_LOST: {
+        backgroundColor: 'red',
+      },
 });
 
 export default Game;
